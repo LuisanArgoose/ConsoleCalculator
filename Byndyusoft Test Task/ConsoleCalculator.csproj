@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleCalculator.Core\ConsoleCalculator.Core.csproj" />
+  </ItemGroup>
+
 </Project>
