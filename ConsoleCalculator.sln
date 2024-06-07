@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleCalculator", "Byndyu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleCalculator.Core", "ConsoleCalculator.Core\ConsoleCalculator.Core.csproj", "{4C29C1AA-45F7-4BD8-B98B-C4856FCE3306}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleCalculator.Tests", "ConsoleCalculator.Tests\ConsoleCalculator.Tests.csproj", "{897DD32F-7250-4AAC-9AC8-74EDF01ED425}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4C29C1AA-45F7-4BD8-B98B-C4856FCE3306}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C29C1AA-45F7-4BD8-B98B-C4856FCE3306}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C29C1AA-45F7-4BD8-B98B-C4856FCE3306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{897DD32F-7250-4AAC-9AC8-74EDF01ED425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{897DD32F-7250-4AAC-9AC8-74EDF01ED425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{897DD32F-7250-4AAC-9AC8-74EDF01ED425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{897DD32F-7250-4AAC-9AC8-74EDF01ED425}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
