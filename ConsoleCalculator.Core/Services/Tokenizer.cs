@@ -10,38 +10,96 @@ namespace ConsoleCalculator.Core.Services
 {
     public class Tokenizer : ITokenizer
     {
+        private readonly IEnumerable<IOperation> _operations;
+        public Tokenizer(IEnumerable<IOperation> operations)
+        {
+            _operations = operations;
+        }
         // Реализация токенизатора
         public IEnumerable<Token> Tokenize(string expression)
         {
             var tokens = new List<Token>();
-            int length = expression.Length;
+            var numberBuilder = new StringBuilder();
+            var operatorSymbols = new HashSet<string>(_operations.Select(op => op.GetOperator()));
+            var parenthesisStack = new Stack<char>();
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < expression.Length; i++)
             {
-                char c = expression[i];
+                var ch = expression[i];
 
-                if (char.IsWhiteSpace(c))
+                if (ch == ' ')
+                {
                     continue;
-
-                if (char.IsDigit(c) || c == '.')
-                {
-                    string number = string.Empty;
-                    while (i < length && (char.IsDigit(expression[i]) || expression[i] == '.'))
-                    {
-                        number += expression[i];
-                        i++;
-                    }
-                    i--;
-                    tokens.Add(new Token(TokenType.Number, number));
                 }
-                else if ("+-*/()".Contains(c))
+                else if (char.IsDigit(ch) || ch == '.')
                 {
-                    tokens.Add(new Token(TokenType.Operator, c.ToString()));
+                    numberBuilder.Append(ch);
+                }
+                else if (ch == '-' && numberBuilder.Length == 0 && (tokens.Count == 0 || tokens.Last().Type == TokenType.Operator || tokens.Last().Type == TokenType.LeftParenthesis))
+                {
+                    numberBuilder.Append(ch); // Отрицательное число
                 }
                 else
                 {
-                    throw new Exception($"Unexpected character: {c}");
+                    if (numberBuilder.Length > 0)
+                    {
+                        tokens.Add(new Token(TokenType.Number, numberBuilder.ToString()));
+                        numberBuilder.Clear();
+                    }
+
+                    if (operatorSymbols.Contains(ch.ToString()))
+                    {
+                        if (tokens.Count == 0 || tokens.Last().Type == TokenType.Operator || tokens.Last().Type == TokenType.LeftParenthesis)
+                        {
+                            throw new ArgumentException($"Invalid expression: insufficient operands for operator '{ch}'");
+                        }
+                        tokens.Add(new Token(TokenType.Operator, ch.ToString()));
+                    }
+                    else if (ch == '(')
+                    {
+                        parenthesisStack.Push(ch);
+                        tokens.Add(new Token(TokenType.LeftParenthesis, ch.ToString()));
+                    }
+                    else if (ch == ')')
+                    {
+                        if (tokens.Last().Type == TokenType.Operator)
+                        {
+                            throw new ArgumentException($"Invalid expression: insufficient operands for operator '{tokens.Last().Value}'");
+                        }
+                        if (parenthesisStack.Count == 0 || parenthesisStack.Pop() != '(')
+                        {
+                            throw new ArgumentException("Invalid expression: opening parenthesis not found");
+                        }
+
+                        tokens.Add(new Token(TokenType.RightParenthesis, ch.ToString()));
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"Unexpected character '{ch}' at position {i}");
+                    }
                 }
+            }
+
+
+            if (numberBuilder.Length > 0)
+            {
+                tokens.Add(new Token(TokenType.Number,numberBuilder.ToString()));
+            }
+            if(tokens.Count < 1)
+            {
+                throw new ArgumentException("No token found");
+            }
+            if (tokens.Count < 2)
+            {
+                throw new ArgumentException("No operations found");
+            }
+            if (tokens.Count > 0 && tokens.Last().Type == TokenType.Operator)
+            {
+                throw new ArgumentException($"Invalid expression: insufficient operands for operator '{tokens.Last().Value}'");
+            }
+            if (parenthesisStack.Count > 0)
+            {
+                throw new ArgumentException("Invalid expression: closing parenthesis not found");
             }
 
             return tokens;

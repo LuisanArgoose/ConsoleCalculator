@@ -26,9 +26,9 @@ namespace ConsoleCalculator.Core.Services
             // Токенизация строки выражения
             var tokens = _tokenizer.Tokenize(expression);
             // Парсинг токенов в AST
-            var parsedExpression = _parser.Parse(tokens);
+            var ast = _parser.Parse(tokens);
             // Вычисление значения выражения
-            return _evaluator.Evaluate(parsedExpression);
+            return _evaluator.Evaluate(ast);
         }
     }
 }

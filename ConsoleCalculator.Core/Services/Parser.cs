@@ -11,82 +11,113 @@ namespace ConsoleCalculator.Core.Services
     // Реализация парсера
     public class Parser : IParser
     {
-        private IEnumerator<Token> _tokens;
-        private Token _currentToken;
+        private readonly IEnumerable<IOperation> _operations;
+
+        public Parser(IEnumerable<IOperation> operations)
+        {
+            _operations = operations;
+        }
 
         public Node Parse(IEnumerable<Token> tokens)
         {
-            _tokens = tokens.GetEnumerator();
-            Advance();
-            return ParseExpression();
+            var tokenList = tokens.ToList();
+
+            // Handle empty input
+            if (tokenList.Count == 0)
+            {
+                throw new ArgumentException("No token found");
+            }
+
+            return ParseExpression(tokenList, 0, tokenList.Count - 1);
         }
 
-        private void Advance()
+        private Node ParseExpression(List<Token> tokens, int start, int end)
         {
-            if (_tokens.MoveNext())
+            Stack<Node> nodes = new Stack<Node>();
+            Stack<IOperation> ops = new Stack<IOperation>();
+
+            for (int i = start; i <= end; i++)
             {
-                _currentToken = _tokens.Current;
-            }
-            else
-            {
-                _currentToken = null;
-            }
-        }
+                var token = tokens[i];
 
-        private Node ParseExpression()
-        {
-            var left = ParseTerm();
-
-            // Обработка операторов + и -
-            while (_currentToken != null && (_currentToken.Value == "+" || _currentToken.Value == "-"))
-            {
-                var op = _currentToken;
-                Advance();
-                var right = ParseTerm();
-                left = new Node(op, left, right);
-            }
-
-            return left;
-        }
-
-        private Node ParseTerm()
-        {
-            var left = ParseFactor();
-
-            // Обработка операторов * и /
-            while (_currentToken != null && (_currentToken.Value == "*" || _currentToken.Value == "/"))
-            {
-                var op = _currentToken;
-                Advance();
-                var right = ParseFactor();
-                left = new Node(op, left, right);
-            }
-
-            return left;
-        }
-
-        private Node ParseFactor()
-        {
-            if (_currentToken.Type == TokenType.Number)
-            {
-                var number = _currentToken;
-                Advance();
-                return new Node(number);
-            }
-
-            if (_currentToken.Value == "(")
-            {
-                Advance();
-                var expression = ParseExpression();
-                if (_currentToken.Value != ")")
+                if (token.Type == TokenType.Number)
                 {
-                    throw new Exception("Missing closing parenthesis");
+                    if(tokens.Count < 2)
+                    {
+                        throw new ArgumentException("No operations found");
+                    }
+                    nodes.Push(new Node(token));
                 }
-                Advance();
-                return expression;
+                else if (token.Type == TokenType.Operator || token.Type == TokenType.LeftParenthesis || token.Type == TokenType.RightParenthesis)
+                {
+                    if (token.Type == TokenType.LeftParenthesis)
+                    {
+                        int j = FindClosingParenthesis(tokens, i);
+                        nodes.Push(ParseExpression(tokens, i + 1, j - 1));
+                        i = j;
+                    }
+                    else if (token.Type == TokenType.RightParenthesis)
+                    {
+                        throw new ArgumentException("Invalid expression: opening parenthesis not found");
+                    }
+                    else
+                    {
+                        var operation = _operations.FirstOrDefault(op => op.GetOperator() == token.Value);
+                        if (operation == null)
+                        {
+                            throw new ArgumentException($"Unknown operator '{token.Value}' at position {i + 1}");
+                        }
+
+                        while (ops.Count > 0 && ops.Peek().GetPriority() >= operation.GetPriority())
+                        {
+                            var opNode = CreateOperationNode(ops.Pop(), nodes);
+                            nodes.Push(opNode);
+                        }
+                        ops.Push(operation);
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException($"Unexpected character '{token.Value}' at position {i + 1}");
+                }
             }
 
-            throw new Exception("Unexpected token");
+            while (ops.Count > 0)
+            {
+                var opNode = CreateOperationNode(ops.Pop(), nodes);
+                nodes.Push(opNode);
+            }
+
+            if (nodes.Count != 1)
+            {
+                throw new ArgumentException("Invalid expression: insufficient operands");
+            }
+
+            return nodes.Pop();
+        }
+
+        private Node CreateOperationNode(IOperation operation, Stack<Node> nodes)
+        {
+            if(nodes.Count < 2)
+            {
+                throw new ArgumentException("Invalid expression: insufficient operands");
+            }
+            var rightNode = nodes.Pop();
+            var leftNode = nodes.Pop();
+            var token = new Token(TokenType.Operator, operation.GetOperator());
+            return new Node(token, leftNode, rightNode); 
+        }
+
+        private int FindClosingParenthesis(List<Token> tokens, int start)
+        {
+            int depth = 1;
+            for (int i = start + 1; i < tokens.Count; i++)
+            {
+                if (tokens[i].Type == TokenType.LeftParenthesis) depth++;
+                if (tokens[i].Type == TokenType.RightParenthesis) depth--;
+                if (depth == 0) return i;
+            }
+            throw new ArgumentException("Invalid expression: closing parenthesis not found");
         }
     }
 }

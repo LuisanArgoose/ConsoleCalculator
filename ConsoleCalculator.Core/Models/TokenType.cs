@@ -10,6 +10,8 @@ namespace ConsoleCalculator.Core.Models
     public enum TokenType
     {
         Number,
-        Operator
+        Operator,
+        LeftParenthesis,
+        RightParenthesis
     }
 }
