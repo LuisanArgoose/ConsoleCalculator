@@ -1,12 +1,31 @@
-﻿using ConsoleCalculator.Core.Services;
+﻿using ConsoleCalculator.Core.Interfaces;
+using ConsoleCalculator.Core.Operations;
+using ConsoleCalculator.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 
-// Инициализация компонентов калькулятора
-var tokenizer = new Tokenizer();
-var parser = new Parser();
-var evaluator = new Evaluator();
-var calculator = new Calculator(tokenizer, parser, evaluator);
 
-// Основной цикл программы
+var services = new ServiceCollection();
+
+// Регистрация операций
+services.AddTransient<IOperation, AddOperation>();
+services.AddTransient<IOperation, SubtractOperation>();
+services.AddTransient<IOperation, MultiplyOperation>();
+services.AddTransient<IOperation, DivideOperation>();
+
+// Регистрация новых операций
+services.AddTransient<IOperation, PowerOperation>();
+services.AddTransient<IOperation, ModulusOperation>();
+
+// Регистрация других сервисов
+services.AddTransient<ITokenizer, Tokenizer>();
+services.AddTransient<IParser, Parser>();
+services.AddTransient<IEvaluator, Evaluator>();
+services.AddTransient<Calculator>();
+
+var serviceProvider = services.BuildServiceProvider();
+
+var calculator = serviceProvider.GetService<Calculator>();
+
 while (true)
 {
     Console.WriteLine("Введите математическое выражение или 'Выход' для завершения:");
@@ -27,7 +46,10 @@ while (true)
     catch (Exception ex)
     {
         // Вывод ошибки
-        Console.WriteLine($"Ошибка: {ex.Message}");
+        Console.WriteLine($"{ex.Message}");
     }
 
 }
+
+
+

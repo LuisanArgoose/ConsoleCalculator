@@ -14,5 +14,23 @@ namespace ConsoleCalculator.Core.Models
         public Node Left { get; } = left;
         public Node Right { get; } = right;
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Node other)
+            {
+                return Token.Equals(other.Token) &&
+                       Equals(Left, other.Left) &&
+                       Equals(Right, other.Right);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Token, Left, Right);
+        }
+
     }
+
+
 }
