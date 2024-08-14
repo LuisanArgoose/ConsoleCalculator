@@ -1,7 +1,25 @@
+using ConsoleCalculator.Core.Interfaces;
+using ConsoleCalculator.Core.Operations;
+using ConsoleCalculator.Core.Services;
+using Ext.Net;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+
+builder.Services.AddTransient<IOperation, AddOperation>();
+builder.Services.AddTransient<IOperation, SubtractOperation>();
+builder.Services.AddTransient<IOperation, MultiplyOperation>();
+builder.Services.AddTransient<IOperation, DivideOperation>();
+
+builder.Services.AddTransient<ITokenizer, Tokenizer>();
+builder.Services.AddTransient<IParser, Parser>();
+builder.Services.AddTransient<IEvaluator, Evaluator>();
+builder.Services.AddSingleton<ICalculator, Calculator>();
+
 
 var app = builder.Build();
 
@@ -23,5 +41,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

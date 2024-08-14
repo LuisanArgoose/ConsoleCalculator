@@ -1,8 +1,17 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Calculator Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/extjs/packages/ext-theme-neutral/build/resources/theme-neutral-all.css">
+    <script src="~/extjs/ext-all.js"></script>
+    <script src="~/js/calculator.js"></script> <!-- Ваш JavaScript файл -->
+</head>
+<body>
+    <div id="calculator"></div>
+</body>
+</html>
