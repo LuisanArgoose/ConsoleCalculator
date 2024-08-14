@@ -1,13 +1,12 @@
 using ConsoleCalculator.Core.Interfaces;
 using ConsoleCalculator.Core.Operations;
 using ConsoleCalculator.Core.Services;
-using Ext.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddRazorPages();
 
 
 builder.Services.AddTransient<IOperation, AddOperation>();
