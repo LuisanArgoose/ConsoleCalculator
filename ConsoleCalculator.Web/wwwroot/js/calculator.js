@@ -2,23 +2,31 @@
 
 function onButtonClick(value) {
     const display = document.getElementById('display');
+    if (display.value == 'Error') {
+        display.value = '';
+    }
     display.value += value;
+   
 }
 
 function onEqualClick() {
     const display = document.getElementById('display');
     const expression = display.value;
 
-    fetch('/api/CalculatorController/calculate?expression=' + encodeURIComponent(expression), {
-        method: 'GET'
-    })
-        .then(response => response.json())
+    fetch(`/api/calculator/calculate?expression=${encodeURIComponent(expression)}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || 'Bad request');
+                });
+            }
+            return response.json();
+        })
         .then(result => {
             display.value = result;
         })
         .catch(error => {
-            display.value = 'Error';
-            console.error('Error:', error);
+            display.value = "Error";
         });
 }
 function onClear() {
@@ -27,5 +35,6 @@ function onClear() {
 
 function onClearEntry() {
     const display = document.getElementById('display');
-    display.value = display.value.slice(0, -1); // Remove the last character
+    display.value = display.value.slice(0, -1); 
 }
+

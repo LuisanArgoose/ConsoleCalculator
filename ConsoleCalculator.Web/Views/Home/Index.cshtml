@@ -9,40 +9,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/calculator.css">
+    <script src="~/js/calculator.js"></script>
 </head>
 <body>
+
     <div id="calculator" class="calculator">
         <input type="text"
                id="display"
                class="calculator-display"
                readonly />
         <div class="calculator-buttons">
+            
             <button onclick="onClear()">C</button>
-            <button onclick="onClearEntry()">CE</button>
             <button onclick="onButtonClick('(')" class="operator-button">(</button>
             <button onclick="onButtonClick(')')" class="operator-button">)</button>
+            <button onclick="onButtonClick('/')" class="operator-button">/</button>
 
             <button onclick="onButtonClick('7')">7</button>
             <button onclick="onButtonClick('8')">8</button>
             <button onclick="onButtonClick('9')">9</button>
-            <button onclick="onButtonClick('/')" class="operator-button">/</button>
+            <button onclick="onButtonClick('*')" class="operator-button">*</button>
 
             <button onclick="onButtonClick('4')">4</button>
             <button onclick="onButtonClick('5')">5</button>
             <button onclick="onButtonClick('6')">6</button>
-            <button onclick="onButtonClick('*')" class="operator-button">*</button>
+            <button onclick="onButtonClick('-')" class="operator-button">-</button>
 
             <button onclick="onButtonClick('1')">1</button>
             <button onclick="onButtonClick('2')">2</button>
             <button onclick="onButtonClick('3')">3</button>
-            <button onclick="onButtonClick('-')" class="operator-button">-</button>
-
+            <button onclick="onButtonClick('+')" class="operator-button">+</button>
+          
             <button onclick="onButtonClick('0')" class="button-zero">0</button>
             <button onclick="onButtonClick('.')">.</button>
             <button onclick="onEqualClick()" class="calculate-button">=</button>
-            <button onclick="onButtonClick('+')" class="operator-button">+</button>
+            
         </div>
+        
     </div>
-    <script src="~/js/calculator.js"></script>
+    
 </body>
 </html>

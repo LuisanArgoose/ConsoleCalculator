@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConsoleCalculator.Web.Controllers
 {
-    
+    [ApiController]
+    [Route("api/calculator")]
     public class CalculatorController : Controller
     {
         private readonly ICalculator _calculator;
@@ -23,7 +24,7 @@ namespace ConsoleCalculator.Web.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Invalid expression: " + ex.Message);
+                return Ok("Invalid expression: " + ex.Message);
             }
         }
     }

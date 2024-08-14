@@ -56,9 +56,8 @@
 }
 
 .calculator-buttons .calculate-button {
-background: #06799F; 
-color: #fff;
-grid-column: span 2; 
+    background: #06799F; 
+    color: #fff;
 }
 
 .calculator-buttons .calculate-button:hover {
